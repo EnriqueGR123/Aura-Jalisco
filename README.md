@@ -42,8 +42,7 @@ La aplicación utiliza información de radiación solar obtenida de NASA POWER y
 2. Entrar a la carpeta del proyecto:
 
    ```bash
-   cd aura-jalisco
-   cd backend
+   cd Aura-Jalisco
    ```
 
 3. Crear un entorno virtual:
@@ -63,16 +62,21 @@ La aplicación utiliza información de radiación solar obtenida de NASA POWER y
    ```bash
    source venv/bin/activate
    ```
+5. Entrar a la carpeta del backend:
 
-5. Instalar las dependencias:
+   ```bash
+   cd backend
+   ```****
+
+6. Instalar las dependencias:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-6. Configurar la conexión a PostgreSQL en el archivo `.env` y asegurarse de que la base de datos esté disponible.
+7. Configurar la conexión a PostgreSQL en el archivo `.env` y asegurarse de que la base de datos esté disponible.
 
-7. Ejecutar la aplicación:
+8. Ejecutar la aplicación:
 
    ```bash
    uvicorn app.main:app --reload
