@@ -61,3 +61,13 @@ dist/
 # =========================
 
 docker-compose.override.yml
+
+uploads/
+
+# =========================
+# Machine Learning
+# =========================
+
+trained_models/
+*.joblib
+*.pkl
