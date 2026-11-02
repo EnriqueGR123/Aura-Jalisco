@@ -105,7 +105,7 @@ La aplicación devuelve una estimación de irradiación solar expresada en `kWh/
 
 Para conocer más sobre Aura Jalisco, sus objetivos, marco teórico, impacto social y propuesta de solución, puedes consultar el siguiente documento:
 
-[📄 Ver documento completo de Aura Jalisco](docs/aura_jalisco.pdf)
+[📄 Ver documento completo de Aura Jalisco](docs/aura_jalisco.pdf.pdf)
 
 ## Objetivo a futuro
 
