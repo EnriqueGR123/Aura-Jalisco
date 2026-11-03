@@ -33,54 +33,81 @@ La aplicación utiliza información de radiación solar obtenida de NASA POWER y
 
 ## ¿Cómo ejecutar la aplicación?
 
-1. Clonar el repositorio:
+### 1. Clonar el repositorio
 
-   ```bash
-   git clone https://github.com/EnriqueGR123/Aura-Jalisco.git
-   ```
+```bash
+git clone https://github.com/EnriqueGR123/Aura-Jalisco.git
+```
 
-2. Entrar a la carpeta del proyecto:
+### 2. Entrar a la carpeta del proyecto
 
-   ```bash
-   cd Aura-Jalisco
-   ```
+```bash
+cd Aura-Jalisco
+```
 
-3. Crear un entorno virtual:
+### 3. Crear un entorno virtual
 
-   ```bash
-   python -m venv venv
-   ```
+```bash
+python -m venv venv
+```
 
-4. Activar el entorno virtual:
+### 4. Activar el entorno virtual
 
-   **Windows:**
-   ```bash
-   venv\Scripts\activate
-   ```
+**Windows:**
 
-   **Mac / Linux:**
-   ```bash
-   source venv/bin/activate
-   ```
-5. Entrar a la carpeta del backend:
+```bash
+venv\Scripts\activate
+```
 
-   ```bash
-   cd backend
-   ```****
+**Mac / Linux:**
 
-6. Instalar las dependencias:
+```bash
+source venv/bin/activate
+```
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 5. Instalar las dependencias
 
-7. Configurar la conexión a PostgreSQL en el archivo `.env` y asegurarse de que la base de datos esté disponible.
+```bash
+cd backend
+python -m pip install -r requirements.txt
+```
 
-8. Ejecutar la aplicación:
+### 6. Configurar las variables de entorno
 
-   ```bash
-   uvicorn app.main:app --reload
-   ```
+Crear un archivo `.env` en la carpeta raíz del proyecto, tomando como referencia el archivo `.env.example`.
+
+Configurar las variables necesarias para la conexión a PostgreSQL. Utilizar las credenciales correspondientes a la configuración local.
+
+### 7. Iniciar la base de datos
+
+Regresar a la carpeta raíz del proyecto y ejecutar:
+
+```bash
+cd ..
+docker compose up -d
+```
+
+Esto iniciará el servicio de PostgreSQL configurado para el proyecto.
+
+### 8. Ejecutar las migraciones de Alembic
+
+Desde la carpeta `backend`, ejecutar:
+
+```bash
+python -m alembic upgrade head
+```
+
+Este comando aplica las migraciones pendientes y prepara la estructura de la base de datos.
+
+### 9. Iniciar la aplicación
+
+Desde la carpeta `backend`, ejecutar:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+
 
 ## ¿Cómo utilizar la aplicación?
 

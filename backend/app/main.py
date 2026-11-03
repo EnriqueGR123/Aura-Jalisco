@@ -12,6 +12,7 @@ from app.models.Dataset import Dataset
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import joblib
+from app.services.machine_learning import preparar_datos
 
 app = FastAPI(title="Aura Jalisco")
 
@@ -37,42 +38,34 @@ def obtener_dataset_y_archivo(id, db):
     dataset = db.query(Dataset).filter(Dataset.id == id).first()
     if not dataset:
         raise HTTPException(status_code=404, detail="Dataset not found")
-
     ruta = Path(dataset.file_path)
     if not ruta.exists():
         raise HTTPException(status_code=404, detail="CSV file not found")
-
     try:
         df = leer_csv(ruta.read_bytes())
     except (pd.errors.ParserError, pd.errors.EmptyDataError, UnicodeDecodeError):
         raise HTTPException(status_code=400, detail="Invalid CSV file")
-
     return dataset, df
 
 
-# Preparamos los datos para el entrenamiento:
-# Esta función verifica que el archivo tenga las columnas necesarias,
-# convierte los valores a números y elimina los registros vacíos
-# o que contienen -999. Después crea una fecha con el año, mes y día,
-# calcula dos variables (seno y coseno) para representar la época del año
-# y separa los datos de entrada (X) de la irradiación solar (y).
-def preparar_datos(df):
-    columnas = ["YEAR", "MO", "DY", "ALLSKY_SFC_SW_DWN"]
-    for columna in columnas:
-        if columna not in df.columns:
-            raise ValueError(f"Falta la columna {columna}")
-        df[columna] = pd.to_numeric(df[columna], errors="coerce")
-    df = df.dropna(subset=columnas)
-    df = df[df["ALLSKY_SFC_SW_DWN"] != -999]
-    df["FECHA"] = pd.to_datetime(dict(year=df["YEAR"], month=df["MO"], day=df["DY"]), errors="coerce")
-    df = df.dropna(subset=["FECHA"])
-    df = df.sort_values("FECHA").reset_index(drop=True)
-    dia = df["FECHA"].dt.dayofyear
-    X = pd.DataFrame({"dia_sin": np.sin(2 * np.pi * dia / 365.25),"dia_cos": np.cos(2 * np.pi * dia / 365.25)})
-    y = df["ALLSKY_SFC_SW_DWN"]
-    validos = y >= 0
 
-    return X[validos], y[validos]
+# def preparar_datos(df):
+#     columnas = ["YEAR", "MO", "DY", "ALLSKY_SFC_SW_DWN"]
+#     for columna in columnas:
+#         if columna not in df.columns:
+#             raise ValueError(f"Falta la columna {columna}")
+#         df[columna] = pd.to_numeric(df[columna], errors="coerce")
+#     df = df.dropna(subset=columnas)
+#     df = df[df["ALLSKY_SFC_SW_DWN"] != -999]
+#     df["FECHA"] = pd.to_datetime(dict(year=df["YEAR"], month=df["MO"], day=df["DY"]), errors="coerce")
+#     df = df.dropna(subset=["FECHA"])
+#     df = df.sort_values("FECHA").reset_index(drop=True)
+#     dia = df["FECHA"].dt.dayofyear
+#     X = pd.DataFrame({"dia_sin": np.sin(2 * np.pi * dia / 365.25),"dia_cos": np.cos(2 * np.pi * dia / 365.25)})
+#     y = df["ALLSKY_SFC_SW_DWN"]
+#     validos = y >= 0
+
+#     return X[validos], y[validos]
 
 
 @app.get("/inicio")

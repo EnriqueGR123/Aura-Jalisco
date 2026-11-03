@@ -21,60 +21,41 @@ COLUMNAS_NECESARIAS = [
     "ALLSKY_SFC_SW_DWN"
 ]
 
-
+# Preparamos los datos para el entrenamiento:
+# Esta función verifica que el archivo tenga las columnas necesarias,
+# convierte los valores a números y elimina los registros vacíos
+# o que contienen -999. Después crea una fecha con el año, mes y día,
+# calcula dos variables (seno y coseno) para representar la época del año
+# y separa los datos de entrada (X) de la irradiación solar (y).
 # Preparamos los datos antes de entrenar
 def preparar_datos(df):
-
     df = df.copy()
-
     # Verificamos que existan todas las columnas necesarias
     for columna in COLUMNAS_NECESARIAS:
         if columna not in df.columns:
             raise ValueError(f"Falta la columna: {columna}")
-
-    # Convertimos los datos a valores numéricos
-    for columna in COLUMNAS_NECESARIAS:
-        df[columna] = pd.to_numeric(
-            df[columna],
-            errors="coerce"
-        )
-
+    for columna in COLUMNAS_NECESARIAS:  # Convertimos los datos a valores numéricos
+        df[columna] = pd.to_numeric(df[columna], errors="coerce")
     # Eliminamos los valores faltantes de las columnas necesarias
     df = df.dropna(subset=COLUMNAS_NECESARIAS)
-
     # NASA POWER utiliza -999 para representar datos faltantes
     df = df[df["ALLSKY_SFC_SW_DWN"] != -999]
-
     # Creamos una columna con la fecha completa
-    df["FECHA"] = pd.to_datetime(
-        dict(
-            year=df["YEAR"],
-            month=df["MO"],
-            day=df["DY"]
-        ),
-        errors="coerce"
-    )
-
+    df["FECHA"] = pd.to_datetime(dict(year=df["YEAR"], month=df["MO"], day=df["DY"]), errors="coerce")
     # Eliminamos fechas inválidas
     df = df.dropna(subset=["FECHA"])
-
     # Ordenamos los datos cronológicamente
     df = df.sort_values("FECHA").reset_index(drop=True)
-
     # Obtenemos el día del año (1 a 366)
-    dia_anio = df["FECHA"].dt.dayofyear
-
+    dia_años = df["FECHA"].dt.dayofyear
     # Convertimos el día del año en variables cíclicas
     # Esto permite representar que diciembre y enero están cerca
-    df["dia_sin"] = np.sin(2 * np.pi * dia_anio / 365.25)
-    df["dia_cos"] = np.cos(2 * np.pi * dia_anio / 365.25)
-
+    df["dia_sin"] = np.sin(2 * np.pi * dia_años / 365.25)
+    df["dia_cos"] = np.cos(2 * np.pi * dia_años / 365.25)
     # Variables que utilizará el modelo
     X = df[["dia_sin", "dia_cos"]]
-
     # Valor que queremos predecir: radiación solar diaria
     y = df["ALLSKY_SFC_SW_DWN"]
-
     # La radiación solar no debe ser negativa
     datos_validos = y >= 0
     X = X[datos_validos]
@@ -166,12 +147,12 @@ def predecir_irradiacion(dataset_id, fecha):
     fecha = pd.to_datetime(fecha)
 
     # Obtenemos el día del año
-    dia_anio = fecha.dayofyear
+    dia_años = fecha.dayofyear
 
     # Creamos las mismas variables utilizadas durante el entrenamiento
     datos = pd.DataFrame([{
-        "dia_sin": np.sin(2 * np.pi * dia_anio / 365.25),
-        "dia_cos": np.cos(2 * np.pi * dia_anio / 365.25)
+        "dia_sin": np.sin(2 * np.pi * dia_años / 365.25),
+        "dia_cos": np.cos(2 * np.pi * dia_años / 365.25)
     }])
 
     # Realizamos la predicción
