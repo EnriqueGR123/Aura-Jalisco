@@ -49,24 +49,6 @@ def obtener_dataset_y_archivo(id, db):
 
 
 
-# def preparar_datos(df):
-#     columnas = ["YEAR", "MO", "DY", "ALLSKY_SFC_SW_DWN"]
-#     for columna in columnas:
-#         if columna not in df.columns:
-#             raise ValueError(f"Falta la columna {columna}")
-#         df[columna] = pd.to_numeric(df[columna], errors="coerce")
-#     df = df.dropna(subset=columnas)
-#     df = df[df["ALLSKY_SFC_SW_DWN"] != -999]
-#     df["FECHA"] = pd.to_datetime(dict(year=df["YEAR"], month=df["MO"], day=df["DY"]), errors="coerce")
-#     df = df.dropna(subset=["FECHA"])
-#     df = df.sort_values("FECHA").reset_index(drop=True)
-#     dia = df["FECHA"].dt.dayofyear
-#     X = pd.DataFrame({"dia_sin": np.sin(2 * np.pi * dia / 365.25),"dia_cos": np.cos(2 * np.pi * dia / 365.25)})
-#     y = df["ALLSKY_SFC_SW_DWN"]
-#     validos = y >= 0
-
-#     return X[validos], y[validos]
-
 
 @app.get("/inicio")
 def inicio():
