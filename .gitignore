@@ -1,0 +1,11 @@
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+.ipython/
+profile_default/
+ipython_config.py
+
+venv/
+.venv/
+__pycache__/
+*.py[cod]
